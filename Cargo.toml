@@ -18,7 +18,7 @@ infer = "0.19" # check file type
 thiserror = "2.0" 
 
 #atty = "0.2"          # detect if a cli tool is running in a terminal or in a script or redirected.
-#regex = "1.11"
+regex = "1.11"
 #ndarray = "0.16"
 #polars = "0.46.0"
 #sevenz-rust = "0.4"   # 7z compression/decompression

@@ -1,6 +1,10 @@
+# notes
+
 - cipal heeft geen KBO nummer in het bestand ... -> kijken of de mensen (ISSZ=rijksregister nummers) overeenkomen
 - dmfa & bosa formaat hebben alle twee KBO nummers (=BTW nummer van de instelling)
 - cipal = 1 lijn header
 - bosa = 1 lijn header
 - dmfa = 2 lijnen header, eerste = nederlands, tweede = frans
-- bedragen zijn in het nederlands (duizend separator = '.' - punt & decimal point = ',' - comma)
+- bedragen zijn in het nederlands (duizend separator = punt '.' & decimal separator = comma ',')
+- KBO nummer heeft altijd 9 cijfers -> u32
+-
