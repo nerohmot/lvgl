@@ -1,4 +1,4 @@
-use core::fmt;
+// Module: lib
 use std::{fs::File, io::Read, path::Path};
 use infer;
 use regex::Regex;
@@ -126,7 +126,10 @@ fn check_rijksregister_nummer(rijksregister_nummer: &str) -> Result<Geslacht, Va
                 return Ok(Geslacht::M);
             }
         } else { // check of geboren in of na 2000
-            let base2 = std::fmt::format(format_args!("2{jj:02}{mm:02}{dd:02}{id:03}")) as u32;
+            let base2 = match format(format_args!("2{jj:02}{mm:02}{dd:02}{id:03}")).parse::<u32>() {
+                Ok(v) => v,
+                Err(_) => return Err(ValidationError::InvalidRijksregisterNummer),
+            };
             let check2 = 97 - (base2 % 97);
             if check2 == ctrl {
                 if id % 2 == 0 {
@@ -141,5 +144,5 @@ fn check_rijksregister_nummer(rijksregister_nummer: &str) -> Result<Geslacht, Va
     } else {
         return Err(ValidationError::InvalidRijksregisterNummer);
     }
-    let brol = "2345"
+    let brol = "2345" as u32;
 }
