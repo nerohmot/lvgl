@@ -4,6 +4,8 @@ use infer;
 use regex::Regex;
 use thiserror::Error;
 use std::fmt::format;
+use regex::Error as RegexError;
+use core::num::ParseIntError;
 
 enum Geslacht {
     M,
@@ -22,6 +24,10 @@ pub enum ValidationError {
     InvalidFileType(String),
     #[error("Invalid Rijksregister Nummer.")]
     InvalidRijksregisterNummer,
+    #[error("Error parsing integer.")]
+    ParseIntError(#[from] ParseIntError),
+    #[error("Error parsing regex.")]
+    RegexError(#[from] RegexError),
 }
 
 pub fn is_valid(path: &Path) -> Result<bool, ValidationError> {
@@ -94,7 +100,7 @@ fn kbo_from_cipal(cipal: &Path) -> Result<u32, ValidationError> {
         return Err(ValidationError::InvalidFileType(cipal.to_string_lossy().to_string()));
     }
 
-    Ok(())
+    Ok(0 as u32)
 }   
 
 fn kbo_from_bosa(bosa: &Path) -> Result<u32, ValidationError> {
@@ -112,12 +118,12 @@ fn check_rijksregister_nummer(rijksregister_nummer: &str) -> Result<Geslacht, Va
     let re = Regex::new(r"^(\d{2})\.?(\d{2})\.?(\d{2})-?(\d{3})\.?(\d{2})$")?;
 
     if let Some(caps) = re.captures(rijksregister_nummer) {
-        let jj = caps.get(1).map_or(0, |m| m as u32);
-        let mm = caps.get(2).map_or(0, |m| m as u32);
-        let dd = caps.get(3).map_or(0, |m| m as u32);
-        let id = caps.get(4).map_or(0, |m| m as u32);
-        let ctrl = caps.get(5).map_or(0, |m| m as u32);
-        let base = write!("{:02}{:02}{:02}{:03}",jj, mm, dd, id) as u32;
+        let jj = caps.get(1).unwrap().as_str().parse::<u32>()?;
+        let mm = caps.get(2).unwrap().as_str().parse::<u32>()?;
+        let dd = caps.get(3).unwrap().as_str().parse::<u32>()?;
+        let id = caps.get(4).unwrap().as_str().parse::<u32>()?;
+        let ctrl = caps.get(5).unwrap().as_str().parse::<u32>()?;   
+        let base = format(format_args!("{:02}{:02}{:02}{:03}",jj, mm, dd, id)).parse::<u32>()?;
         let check = 97 - (base % 97);
         if check == ctrl { // check of geboren voor 2000
             if id % 2 == 0 {
@@ -126,10 +132,7 @@ fn check_rijksregister_nummer(rijksregister_nummer: &str) -> Result<Geslacht, Va
                 return Ok(Geslacht::M);
             }
         } else { // check of geboren in of na 2000
-            let base2 = match format(format_args!("2{jj:02}{mm:02}{dd:02}{id:03}")).parse::<u32>() {
-                Ok(v) => v,
-                Err(_) => return Err(ValidationError::InvalidRijksregisterNummer),
-            };
+            let base2 = format(format_args!("2{jj:02}{mm:02}{dd:02}{id:03}")).parse::<u32>()?;
             let check2 = 97 - (base2 % 97);
             if check2 == ctrl {
                 if id % 2 == 0 {
@@ -144,5 +147,4 @@ fn check_rijksregister_nummer(rijksregister_nummer: &str) -> Result<Geslacht, Va
     } else {
         return Err(ValidationError::InvalidRijksregisterNummer);
     }
-    let brol = "2345" as u32;
 }
