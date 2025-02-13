@@ -1,0 +1,33 @@
+[package]
+name = "lvgl"
+version = "0.0.0"
+authors = ["Tom Hören <horen.tom@gmail.com>"]
+description = "Loonvergelijking dmfa with bosa/cipal"
+keywords = ["cli", "data-structures", "data-processing", "algorithms"]
+categories = ["cli", "data-structures", "data-processing", "algorithms"]
+license = "MIT"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5", features = ["cargo", "derive"]}
+indicatif = "0.17" # progress bar
+time = { version = "0.3", features = ["formatting"] }
+tempfile = "3.16"
+umya-spreadsheet = "2.2.2"
+infer = "0.19" # check file type
+thiserror = "2.0" 
+
+#atty = "0.2"          # detect if a cli tool is running in a terminal or in a script or redirected.
+#regex = "1.11"
+#ndarray = "0.16"
+#polars = "0.46.0"
+#sevenz-rust = "0.4"   # 7z compression/decompression
+#zstd = "0.9"          # zstd compression/decompression
+#lz4 = "1.0"           # lz4 compression/decompression
+#flate2 = "1.0"        # gzip compression/decompression
+#xz2 = "0.1"           # xz/lzma compression/decompression
+#zip = "2.2"           # zip/zstd/bz2 compression/decompression
+
+[[bin]]
+name = "lvgl"
+path = "src/bin/lvgl.rs"
