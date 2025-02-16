@@ -2,7 +2,8 @@ use std::{path::Path, process};
 
 use clap::{Arg, Command, crate_version, crate_authors, ArgGroup};
 // use std::{fs::File, io::{Seek, SeekFrom}};
-use lvgl::{is_valid, compare_dmfa_bosa, compare_dmfa_cipal};
+use lvgl::types::DfmaReader;
+
 
 fn main() {
     let description = env!("CARGO_PKG_DESCRIPTION");
@@ -37,6 +38,8 @@ fn main() {
         let bosa = matches.get_one::<String>("bosa.xlsx");
         let cipal = matches.get_one::<String>("cipal.xlsx");
     
+        let dfma_reader = DfmaReader::new(&dmfa);
+
         let dmfa_path = Path::new(&dmfa);
 
         match is_valid(dmfa_path) {
